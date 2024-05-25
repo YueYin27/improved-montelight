@@ -10,43 +10,32 @@
 #include "shape.h"
 #include "sphere.h"
 #include "tracer.h"
+#include "cube.h"
+#include "checkerboard.h"
 
 bool EMITTER_SAMPLING = true;
 
 std::vector<Shape *> simpleScene = {
-    new Sphere(Vector(1e5+1,40.8,81.6), 1e5f, Vector(.75,.25,.25), Vector()),
-    new Sphere(Vector(-1e5+99,40.8,81.6), 1e5f, Vector(.25,.25,.75), Vector()),
-    new Sphere(Vector(50,40.8, 1e5), 1e5f, Vector(.75,.75,.75), Vector()),
-    new Sphere(Vector(50, 1e5, 81.6), 1e5f, Vector(.75,.75,.75), Vector()),
-    new Sphere(Vector(50,-1e5+81.6,81.6), 1e5f, Vector(.75,.75,.75), Vector()),
-    new Sphere(Vector(27,16.5,47), 16.5f, Vector(1,1,1) * 0.799, Vector()),
-    new Sphere(Vector(73,16.5,78), 16.5f, Vector(1,1,1) * 0.799, Vector()),
-    new Sphere(Vector(50,65.1,81.6), 8.5, Vector(), Vector(4,4,4) * 100)
-};
-
-std::vector<Shape *> complexScene = {
-    new Sphere(Vector(1e5+1,40.8,81.6), 1e5f, Vector(.75,.25,.25), Vector()),
-    new Sphere(Vector(-1e5+99,40.8,81.6), 1e5f, Vector(.25,.25,.75), Vector()),
-    new Sphere(Vector(50,40.8, 1e5), 1e5f, Vector(.75,.75,.75), Vector()),
-    new Sphere(Vector(50, 1e5, 81.6), 1e5f, Vector(.75,.75,.75), Vector()),
-    new Sphere(Vector(50,-1e5+81.6,81.6), 1e5f, Vector(.75,.75,.75), Vector()),
-    new Sphere(Vector(20,16.5,40), 16.5f, Vector(1,1,1) * 0.799, Vector()),
-    new Sphere(Vector(50,16.5,80), 16.5f, Vector(1,1,1) * 0.799, Vector()),
-    new Sphere(Vector(75,16.5,120), 16.5f, Vector(1,1,1) * 0.799, Vector()),
-    new Sphere(Vector(50,65.1,40), 1.5, Vector(), Vector(4,4,4) * 100),
-    new Sphere(Vector(50,65.1,120), 1.5, Vector(), Vector(4,4,4) * 100)
+    new Checkerboard(Vector(0.5, 0.25, 0.5), Vector(0.75, 0.75, 0.25), 10, Vector()),  // Checkerboard
+    new Sphere(Vector(1e5+1,40.8,81.6), 1e5f, Vector(0.9, 0.6, 0.7) * 0.799, Vector()),  // Left wall
+    new Sphere(Vector(-1e5+99,40.8,81.6), 1e5f, Vector(0.2, 0.6, 0.86), Vector()),  // Right wall
+    new Sphere(Vector(50,40.8, 1e5), 1e5f, Vector(200, 196, 223) / 255.0, Vector()),  // Back wall
+    new Sphere(Vector(50,-1e5+81.6,81.6), 1e5f, Vector(176, 159, 202) / 255.0, Vector()),  // ceiling
+    new Sphere(Vector(27,16.5,47), 16.5f, Vector(47, 83, 155) / 255.0, Vector()),  // Small sphere
+    new Cube(Vector(60, 0, 60), Vector(85, 40, 85), Vector(0.9, 0.6, 0.7) * 0.799, Vector(), M_PI/4), // Big cube
+    new Sphere(Vector(50,73,81.6), 5, Vector(), Vector(4,4,4) * 200)  // Light source
 };
 
 int main(int argc, const char *argv[]) {
     EMITTER_SAMPLING = true;
-    int w = 256, h = 256;
+    int w = 1024, h = 1024;
     int SNAPSHOT_INTERVAL = 10;
     unsigned int SAMPLES = 50;
     bool FOCUS_EFFECT = false;
     double FOCAL_LENGTH = 35;
     double APERTURE_FACTOR = 1;
     Image img(w, h);
-    auto &scene = complexScene;
+    auto &scene = simpleScene;
     Tracer tracer = Tracer(scene);
     double aperture = 0.5135 / APERTURE_FACTOR;
     Vector cx = Vector((w * aperture) / h, 0, 0);
@@ -85,7 +74,7 @@ int main(int argc, const char *argv[]) {
                 } else {
                     dy = 1 - sqrt(2 - Uy);
                 }
-                Vector d = (cx * (((x+dx) / float(w)) - 0.5)) + (cy * (((y+dy) / float(h)) - 0.5)) + camera.direction;
+                Vector d = (cx * (((x + dx) / float(w)) - 0.5)) + (cy * (((y + dy) / float(h)) - 0.5)) + camera.direction;
                 Ray ray = Ray(camera.origin + d * 140, d.norm());
                 if (FOCUS_EFFECT) {
                     Vector fp = (camera.origin + d * L) + d.norm() * FOCAL_LENGTH;

@@ -12,8 +12,9 @@ extern bool EMITTER_SAMPLING;
 struct Tracer {
     std::vector<Shape *> scene;
     Tracer(const std::vector<Shape *> &scene_) : scene(scene_) {}
+    
     std::pair<Shape *, double> getIntersection(const Ray &r) const {
-        Shape *hitObj = NULL;
+        Shape *hitObj = nullptr;
         double closest = 1e20f;
         for (Shape *obj : scene) {
             double distToHit = obj->intersects(r);
@@ -24,9 +25,11 @@ struct Tracer {
         }
         return std::make_pair(hitObj, closest);
     }
+    
     Vector getRadiance(const Ray &r, int depth) {
         auto result = getIntersection(r);
         Shape *hitObj = result.first;
+        if (!hitObj) return Vector();
         double U = drand48();
         if (depth > 4 && (depth > 20 || U > hitObj->color.max())) {
             return Vector();
@@ -36,6 +39,7 @@ struct Tracer {
         if (norm.dot(r.direction) > 0) {
             norm = norm * -1;
         }
+        Vector color = hitObj->getColor(hitPos);
         Vector lightSampling;
         if (EMITTER_SAMPLING) {
             for (Shape *light : scene) {
@@ -70,9 +74,9 @@ struct Tracer {
         Vector d = (u * cos(angle) * dist_cen + v * sin(angle) * dist_cen + norm * sqrt(1 - dist_cen * dist_cen)).norm();
         Vector reflected = getRadiance(Ray(hitPos, d), depth + 1);
         if (!EMITTER_SAMPLING || depth == 0) {
-            return hitObj->emit + hitObj->color * lightSampling + hitObj->color * reflected;
+            return hitObj->emit + color * lightSampling + color * reflected;
         }
-        return hitObj->color * lightSampling + hitObj->color * reflected;
+        return color * lightSampling + color * reflected;
     }
 };
 

@@ -14,10 +14,10 @@ struct Vector {
     inline Vector operator/(double o) const { return Vector(x / o, y / o, z / o); }
     inline Vector operator*(double o) const { return Vector(x * o, y * o, z * o); }
     inline double dot(const Vector &o) const { return x * o.x + y * o.y + z * o.z; }
-    inline Vector &norm() { return *this = *this * (1 / sqrt(x * x + y * y + z * z)); }
-    inline Vector cross(Vector &o) { return Vector(y * o.z - z * o.y, z * o.x - x * o.z, x * o.y - y * o.x); }
-    inline double min() { return fmin(x, fmin(y, z)); }
-    inline double max() { return fmax(x, fmax(y, z)); }
+    inline Vector norm() const { return *this * (1 / sqrt(x * x + y * y + z * z)); } // Marked as const
+    inline Vector cross(const Vector &o) const { return Vector(y * o.z - z * o.y, z * o.x - x * o.z, x * o.y - y * o.x); }
+    inline double min() const { return fmin(x, fmin(y, z)); } // Marked as const
+    inline double max() const { return fmax(x, fmax(y, z)); } // Marked as const
     inline Vector &abs() { x = fabs(x); y = fabs(y); z = fabs(z); return *this; }
     inline Vector &clamp() {
         auto clampDouble = [](double x) {
