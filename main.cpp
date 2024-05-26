@@ -8,11 +8,8 @@
 #include "vector.h"
 #include "ray.h"
 #include "image.h"
-#include "shape.h"
-#include "sphere.h"
+#include "shapes.h"
 #include "tracer.h"
-#include "cube.h"
-#include "checkerboard.h"
 
 bool EMITTER_SAMPLING = true;
 
@@ -20,7 +17,7 @@ std::vector<Shape *> simpleScene = {
     new Sphere(Vector(1e5+1,40.8,81.6), 1e5f, Vector(0.9, 0.6, 0.7) * 0.799, Vector()),  // Left wall
     new Sphere(Vector(-1e5+99,40.8,81.6), 1e5f, Vector(0.2, 0.6, 0.86), Vector()),  // Right wall
     new Sphere(Vector(50,40.8, 1e5), 1e5f, Vector(200, 196, 223) / 255.0, Vector()),  // Back wall
-    new Checkerboard(Vector(0.5, 0.25, 0.5), Vector(0.75, 0.75, 0.25), 10, Vector()),  // Checkerboard  // Floor
+    new Checkerboard(Vector(0.5, 0.25, 0.5), Vector(0.75, 0.75, 0.25), 10, Vector()),  // Checkerboard (Floor)
     new Sphere(Vector(50,1e5+81.6,81.6), 1e5f, Vector(176, 159, 202) / 255.0, Vector()),  // Ceiling
     new Sphere(Vector(27,16.5,47), 16.5f, Vector(47, 83, 155) / 255.0, Vector()),  // Small sphere
     new Cube(Vector(60, 0, 60), Vector(85, 40, 85), Vector(0.9, 0.6, 0.7) * 0.799, Vector(), M_PI/4), // Big cube

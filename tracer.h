@@ -3,7 +3,7 @@
 
 #include <vector>
 #include <cmath>
-#include "shape.h"
+#include "shapes.h"
 #include "ray.h"
 #include "vector.h"
 
