@@ -88,7 +88,7 @@ struct Cube : Shape {
         double tymax = (max.y - rotatedRay.origin.y) / rotatedRay.direction.y;
         if (tymin > tymax) std::swap(tymin, tymax);
 
-        if ((tmin > tymax) || (tymin > tmax)) return 0;
+        if ((tmin > tymax + EPSILON) || (tymin > tmax + EPSILON)) return 0;
         if (tymin > tmin) tmin = tymin;
         if (tymax < tmax) tmax = tymax;
 
@@ -96,11 +96,11 @@ struct Cube : Shape {
         double tzmax = (max.z - rotatedRay.origin.z) / rotatedRay.direction.z;
         if (tzmin > tzmax) std::swap(tzmin, tzmax);
 
-        if ((tmin > tzmax) || (tzmin > tmax)) return 0;
+        if ((tmin > tzmax + EPSILON) || (tzmin > tmax + EPSILON)) return 0;
         if (tzmin > tmin) tmin = tzmin;
         if (tzmax < tmax) tmax = tzmax;
 
-        return tmin > 0 ? tmin : tmax;
+        return tmin > EPSILON ? tmin : (tmax > EPSILON ? tmax : 0);
     }
 
     Vector getNormal(const Vector &p) const override {
