@@ -94,7 +94,7 @@ int main(int argc, const char *argv[]) {
         if (sample && sample % SNAPSHOT_INTERVAL == 0) {
             std::ostringstream fn;
             fn << std::setfill('0') << std::setw(5) << sample;
-            img.save("temp/render_" + fn.str());
+            img.save("results_temp/render_" + fn.str());
         }
         for (int y = 0; y < h; ++y) {
             for (int x = 0; x < w; ++x) {
@@ -140,6 +140,6 @@ int main(int argc, const char *argv[]) {
     std::chrono::duration<double> elapsed = end - start;
     std::cout << "\nRendering completed in " << elapsed.count() << " seconds." << std::endl;
 
-    img.save("render");
+    img.save("results_final/render");
     return 0;
 }
