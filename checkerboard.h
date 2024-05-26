@@ -3,6 +3,8 @@
 
 #include "shape.h"
 
+#define EPSILON 0.001f
+
 struct Checkerboard : Shape {
     Vector color1, color2;
     double size;

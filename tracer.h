@@ -30,9 +30,15 @@ struct Tracer {
         auto result = getIntersection(r);
         Shape *hitObj = result.first;
         if (!hitObj) return Vector();
+        
         double U = drand48();
-        if (depth > 4 && (depth > 20 || U > hitObj->color.max())) {
-            return Vector();
+        if (depth > 4) {
+            double terminationProbability = hitObj->color.max();  // the Russian roulette is based on the maximum color component
+            if (depth > 20 || U > terminationProbability) {
+                return Vector();
+            }
+            // Scale the radiance by the survival probability to maintain energy conservation
+            hitObj->color = hitObj->color / terminationProbability;
         }
         Vector hitPos = r.origin + r.direction * result.second;
         Vector norm = hitObj->getNormal(hitPos);
