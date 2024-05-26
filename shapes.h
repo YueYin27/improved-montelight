@@ -8,9 +8,18 @@
 
 #define EPSILON 0.001f
 
+enum Material {
+    DIFFUSE,
+    MIRROR
+};
+
 struct Shape {
     Vector color, emit;
-    Shape(const Vector &color_, const Vector &emit_) : color(color_), emit(emit_) {}
+    Material material;  // Add material attribute
+
+    Shape(const Vector &color_, const Vector &emit_, Material material_) 
+        : color(color_), emit(emit_), material(material_) {}
+
     virtual double intersects(const Ray &r) const { return 0; }
     virtual Vector randomPoint() const { return Vector(); }
     virtual Vector getNormal(const Vector &p) const { return Vector(); }
@@ -21,9 +30,10 @@ struct Shape {
 struct Sphere : Shape {
     Vector center;
     double radius;
-    Sphere(const Vector &center_, double radius_, const Vector &color_, const Vector &emit_) :
-        Shape(color_, emit_), center(center_), radius(radius_) {}
-    
+
+    Sphere(const Vector &center_, double radius_, const Vector &color_, const Vector &emit_, Material material_)
+        : Shape(color_, emit_, material_), center(center_), radius(radius_) {}
+
     double intersects(const Ray &r) const override {
         Vector offset = r.origin - center;
         double a = r.direction.dot(r.direction);
@@ -44,7 +54,7 @@ struct Sphere : Shape {
         }
         return 0;
     }
-    
+
     Vector randomPoint() const override {
         double theta = drand48() * M_PI;
         double phi = drand48() * 2 * M_PI;
@@ -53,7 +63,7 @@ struct Sphere : Shape {
         double dzr = radius * cos(theta);
         return Vector(center.x + dxr, center.y + dyr, center.z + dzr);
     }
-    
+
     Vector getNormal(const Vector &p) const override {
         return (p - center) / radius;
     }
@@ -61,10 +71,10 @@ struct Sphere : Shape {
 
 struct Cube : Shape {
     Vector min, max, center;
-    double angle; // Rotation angle in radians
+    double angle;  // Rotation angle in radians
 
-    Cube(const Vector &min_, const Vector &max_, const Vector &color_, const Vector &emit_, double angle_) :
-        Shape(color_, emit_), min(min_), max(max_), center((min_ + max_) / 2), angle(angle_) {}
+    Cube(const Vector &min_, const Vector &max_, const Vector &color_, const Vector &emit_, Material material_, double angle_)
+        : Shape(color_, emit_, material_), min(min_), max(max_), center((min_ + max_) / 2), angle(angle_) {}
 
     Vector rotatePoint(const Vector &p) const {
         Vector translated = p - center;
@@ -126,8 +136,8 @@ struct Plane : Shape {
     Vector normal;
     double d;
 
-    Plane(const Vector &normal_, double d_, const Vector &color_, const Vector &emit_) :
-        Shape(color_, emit_), normal(normal_), d(d_) {}
+    Plane(const Vector &normal_, double d_, const Vector &color_, const Vector &emit_, Material material_)
+        : Shape(color_, emit_, material_), normal(normal_), d(d_) {}
 
     double intersects(const Ray &r) const override {
         double denom = normal.dot(r.direction);
@@ -141,7 +151,7 @@ struct Plane : Shape {
     }
 
     Vector randomPoint() const override {
-        return Vector(); // Not used for planes
+        return Vector();  // Not used for planes
     }
 };
 
@@ -149,8 +159,8 @@ struct Checkerboard : Shape {
     Vector color1, color2;
     double size;
 
-    Checkerboard(const Vector &color1_, const Vector &color2_, double size_, const Vector &emit_) :
-        Shape(Vector(), emit_), color1(color1_), color2(color2_), size(size_) {}
+    Checkerboard(const Vector &color1_, const Vector &color2_, double size_, const Vector &emit_, Material material_)
+        : Shape(Vector(), emit_, material_), color1(color1_), color2(color2_), size(size_) {}
 
     double intersects(const Ray &r) const override {
         if (fabs(r.direction.y) < EPSILON) return 0;
@@ -160,7 +170,7 @@ struct Checkerboard : Shape {
     }
 
     Vector getNormal(const Vector &p) const override {
-        return Vector(0, 1, 0); // Normal pointing up
+        return Vector(0, 1, 0);  // Normal pointing up
     }
 
     Vector getColor(const Vector &p) const override {
@@ -174,8 +184,9 @@ struct Checkerboard : Shape {
     }
 
     Vector randomPoint() const override {
-        return Vector(); // Not used for the floor
+        return Vector();  // Not used for the floor
     }
 };
+
 
 #endif // SHAPES_H

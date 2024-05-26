@@ -10,7 +10,10 @@ extern bool EMITTER_SAMPLING;
 
 struct Tracer {
     std::vector<Shape *> scene;
-    Tracer(const std::vector<Shape *> &scene_) : scene(scene_) {}
+    Vector cameraPos;  // Add this line
+    Tracer(const std::vector<Shape *> &scene_, const Vector &cameraPos_) 
+        : scene(scene_), cameraPos(cameraPos_) {}
+    // Tracer(const std::vector<Shape *> &scene_) : scene(scene_) {}
     std::pair<Shape *, double> getIntersection(const Ray &r) const {
         Shape *hitObj = nullptr;
         double closest = 1e20f;
@@ -30,15 +33,13 @@ struct Tracer {
         double U = drand48();
 
         double terminationProbability = hitObj->color.max();  // the Russian roulette is based on the maximum color component
-        if (depth > 4 && (depth > 20 || U > terminationProbability)) {
-            return Vector();
+        if (depth > 4) {
+            if (depth > 20 || U > terminationProbability) {
+                return Vector();
+            }
             // Scale the radiance by the survival probability to maintain energy conservation
             hitObj->color = hitObj->color / terminationProbability;
         }
-
-        // if (depth > 0) {
-        //     return Vector();
-        // }
 
         Vector hitPos = r.origin + r.direction * result.second;
         Vector norm = hitObj->getNormal(hitPos);
@@ -62,11 +63,23 @@ struct Tracer {
                         double srad = 1.5;
                         double cos_a_max = sqrt(1-srad*srad/(hitPos - lightPos).dot(hitPos - lightPos));
                         double omega = 2*M_PI*(1-cos_a_max);
-                        lightSampling += light->emit * wi * omega * M_1_PI;
+
+                        // Different BRDF implementations based on material
+                        if (hitObj->material == MIRROR) {
+                            Vector reflectionDirection = norm * 2 * norm.dot(lightDirection) - lightDirection;
+                            Vector viewDir = (cameraPos - hitPos).norm();
+                            double vr = reflectionDirection.dot(viewDir);
+                            if (vr > 0.9) {  // A threshold to account for numerical precision
+                                lightSampling += light->emit * wi * omega * M_1_PI;
+                            }
+                        } else if (hitObj->material == DIFFUSE) {
+                            lightSampling += light->emit * wi * omega * M_1_PI;
+                        }
                     }
                 }
             }
         }
+
         double angle = 2 * M_PI * drand48();
         double dist_cen = sqrt(drand48());
         Vector u;
@@ -84,5 +97,6 @@ struct Tracer {
         }
         return color * lightSampling + color * reflected;
     }
+
 };
 #endif // TRACER_H
