@@ -41,7 +41,7 @@ void printProgressBar(int sample, int totalSamples) {
 
 int main(int argc, const char *argv[]) {
     EMITTER_SAMPLING = true;
-    int w = 128, h = 128;
+    int w = 256, h = 256;
     int SNAPSHOT_INTERVAL = 10;
     unsigned int SAMPLES = 50;
     bool FOCUS_EFFECT = false;

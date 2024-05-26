@@ -40,6 +40,11 @@ struct Tracer {
             // Scale the radiance by the survival probability to maintain energy conservation
             hitObj->color = hitObj->color / terminationProbability;
         }
+
+        // if (depth > 0) {
+        //     return Vector();
+        // }
+
         Vector hitPos = r.origin + r.direction * result.second;
         Vector norm = hitObj->getNormal(hitPos);
         if (norm.dot(r.direction) > 0) {
