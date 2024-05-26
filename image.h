@@ -12,11 +12,13 @@ struct Image {
     unsigned int width, height;
     Vector *pixels, *current;
     unsigned int *samples;
+    double *variance;
     std::vector<Vector> *raw_samples;
     Image(unsigned int w, unsigned int h) : width(w), height(h) {
         pixels = new Vector[width * height];
         samples = new unsigned int[width * height];
         current = new Vector[width * height];
+        variance = new double[width * height](); // Initialize to zero
     }
     Vector getPixel(unsigned int x, unsigned int y) {
         unsigned int index = (height - y - 1) * width + x;
@@ -27,6 +29,13 @@ struct Image {
         pixels[index] += v;
         samples[index] += 1;
         current[index] = pixels[index] / samples[index];
+        
+        // Calculate the mean and variance
+        if (samples[index] > 1) {
+            Vector mean = pixels[index] / samples[index];
+            Vector diff = v - mean;
+            variance[index] = (variance[index] * (samples[index] - 1) + diff.dot(diff)) / samples[index];
+        }
     }
     Vector getSurroundingAverage(int x, int y, int pattern=0) {
         unsigned int index = (height - y - 1) * width + x;
@@ -77,6 +86,7 @@ struct Image {
     ~Image() {
         delete[] pixels;
         delete[] samples;
+        delete[] variance;
     }
 };
 
