@@ -1,6 +1,5 @@
 #ifndef TRACER_H
 #define TRACER_H
-
 #include <vector>
 #include <cmath>
 #include "shapes.h"
@@ -12,7 +11,6 @@ extern bool EMITTER_SAMPLING;
 struct Tracer {
     std::vector<Shape *> scene;
     Tracer(const std::vector<Shape *> &scene_) : scene(scene_) {}
-    
     std::pair<Shape *, double> getIntersection(const Ray &r) const {
         Shape *hitObj = nullptr;
         double closest = 1e20f;
@@ -25,18 +23,15 @@ struct Tracer {
         }
         return std::make_pair(hitObj, closest);
     }
-    
     Vector getRadiance(const Ray &r, int depth) {
         auto result = getIntersection(r);
         Shape *hitObj = result.first;
         if (!hitObj) return Vector();
-        
         double U = drand48();
-        if (depth > 4) {
-            double terminationProbability = hitObj->color.max();  // the Russian roulette is based on the maximum color component
-            if (depth > 20 || U > terminationProbability) {
-                return Vector();
-            }
+
+        double terminationProbability = hitObj->color.max();  // the Russian roulette is based on the maximum color component
+        if (depth > 4 && (depth > 20 || U > terminationProbability)) {
+            return Vector();
             // Scale the radiance by the survival probability to maintain energy conservation
             hitObj->color = hitObj->color / terminationProbability;
         }
@@ -90,5 +85,4 @@ struct Tracer {
         return color * lightSampling + color * reflected;
     }
 };
-
 #endif // TRACER_H
