@@ -122,6 +122,29 @@ struct Cube : Shape {
     }
 };
 
+struct Plane : Shape {
+    Vector normal;
+    double d;
+
+    Plane(const Vector &normal_, double d_, const Vector &color_, const Vector &emit_) :
+        Shape(color_, emit_), normal(normal_), d(d_) {}
+
+    double intersects(const Ray &r) const override {
+        double denom = normal.dot(r.direction);
+        if (fabs(denom) < EPSILON) return 0;
+        double t = -(r.origin.dot(normal) + d) / denom;
+        return (t > EPSILON) ? t : 0;
+    }
+
+    Vector getNormal(const Vector &p) const override {
+        return normal;
+    }
+
+    Vector randomPoint() const override {
+        return Vector(); // Not used for planes
+    }
+};
+
 struct Checkerboard : Shape {
     Vector color1, color2;
     double size;

@@ -14,14 +14,14 @@
 bool EMITTER_SAMPLING = true;
 
 std::vector<Shape *> simpleScene = {
-    new Sphere(Vector(1e5+1,40.8,81.6), 1e5f, Vector(0.9, 0.6, 0.7) * 0.799, Vector()),  // Left wall
-    new Sphere(Vector(-1e5+99,40.8,81.6), 1e5f, Vector(0.2, 0.6, 0.86), Vector()),  // Right wall
-    new Sphere(Vector(50,40.8, 1e5), 1e5f, Vector(200, 196, 223) / 255.0, Vector()),  // Back wall
+    new Plane(Vector(1, 0, 0), 0, Vector(0.9, 0.6, 0.7) * 0.799, Vector()),  // Left wall
+    new Plane(Vector(-1, 0, 0), 100, Vector(0.2, 0.6, 0.86), Vector()),  // Right wall
+    new Plane(Vector(0, 0, -1), 0, Vector(200, 196, 223) / 255.0, Vector()),  // Back wall
+    new Plane(Vector(0, -1, 0), 81.6, Vector(176, 159, 202) / 255.0, Vector()),  // Ceiling
     new Checkerboard(Vector(0.5, 0.25, 0.5), Vector(0.75, 0.75, 0.25), 10, Vector()),  // Checkerboard (Floor)
-    new Sphere(Vector(50,1e5+81.6,81.6), 1e5f, Vector(176, 159, 202) / 255.0, Vector()),  // Ceiling
-    new Sphere(Vector(27,16.5,47), 16.5f, Vector(47, 83, 155) / 255.0, Vector()),  // Small sphere
+    new Sphere(Vector(27, 16.5, 47), 16.5f, Vector(47, 83, 155) / 255.0, Vector()),  // Small sphere
     new Cube(Vector(60, 0, 60), Vector(85, 40, 85), Vector(0.9, 0.6, 0.7) * 0.799, Vector(), M_PI/4), // Big cube
-    new Sphere(Vector(50,73,81.6), 5, Vector(), Vector(4,4,4) * 200)  // Light source
+    new Sphere(Vector(50, 73, 81.6), 5, Vector(), Vector(4, 4, 4) * 150)  // Light source
 };
 
 void printProgressBar(int sample, int totalSamples) {
@@ -40,6 +40,7 @@ void printProgressBar(int sample, int totalSamples) {
 }
 
 int main(int argc, const char *argv[]) {
+    srand48(26);  // set random seed
     EMITTER_SAMPLING = true;
     int w = 256, h = 256;
     int SNAPSHOT_INTERVAL = 10;
