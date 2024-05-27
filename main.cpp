@@ -58,7 +58,7 @@ int main(int argc, const char *argv[]) {
             MAX_spp = std::stoi(argv[4]);
             MIN_spp = std::stoi(argv[5]);
         }
-    } else {
+    } else if(argc > 6) {
         std::cout << "Usage: " << argv[0] << " <width> <height> <adaptive_sampling> [<max_spp> <min_spp>]" << std::endl;
         return 1;
     }
