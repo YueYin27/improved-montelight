@@ -10,7 +10,8 @@
 
 enum Material {
     DIFFUSE,
-    MIRROR
+    MIRROR,
+    GLASS
 };
 
 struct Shape {
@@ -155,36 +156,68 @@ struct Plane : Shape {
     }
 };
 
-struct Checkerboard : Shape {
+struct Checkerboard : Plane {
     Vector color1, color2;
     double size;
 
-    Checkerboard(const Vector &color1_, const Vector &color2_, double size_, const Vector &emit_, Material material_)
-        : Shape(Vector(), emit_, material_), color1(color1_), color2(color2_), size(size_) {}
-
-    double intersects(const Ray &r) const override {
-        if (fabs(r.direction.y) < EPSILON) return 0;
-        double t = -r.origin.y / r.direction.y;
-        if (t < 0) return 0;
-        return t;
-    }
-
-    Vector getNormal(const Vector &p) const override {
-        return Vector(0, 1, 0);  // Normal pointing up
-    }
+    Checkerboard(const Vector &normal_, double d_, const Vector &color1_, const Vector &color2_, double size_, const Vector &emit_, Material material_)
+        : Plane(normal_, d_, Vector(), emit_, material_), color1(color1_), color2(color2_), size(size_) {}
 
     Vector getColor(const Vector &p) const override {
-        int x = floor(p.x / size);
-        int z = floor(p.z / size);
-        if ((x + z) % 2 == 0) {
+        Vector localP = p - normal * (p.dot(normal) + d); // Project p onto the plane
+        int x, y;
+
+        // Determine the dominant axis of the normal vector
+        if (fabs(normal.x) > fabs(normal.y) && fabs(normal.x) > fabs(normal.z)) {
+            // Plane is yz
+            x = floor(localP.y / size);
+            y = floor(localP.z / size);
+        } else if (fabs(normal.y) > fabs(normal.x) && fabs(normal.y) > fabs(normal.z)) {
+            // Plane is xz
+            x = floor(localP.x / size);
+            y = floor(localP.z / size);
+        } else {
+            // Plane is xy
+            x = floor(localP.x / size);
+            y = floor(localP.y / size);
+        }
+
+        if ((x + y) % 2 == 0) {
             return color1;
         } else {
             return color2;
         }
     }
+};
 
-    Vector randomPoint() const override {
-        return Vector();  // Not used for the floor
+struct Stripe : Plane {
+    Vector color1, color2;
+    double size;
+
+    Stripe(const Vector &normal_, double d_, const Vector &color1_, const Vector &color2_, double size_, const Vector &emit_, Material material_)
+        : Plane(normal_, d_, Vector(), emit_, material_), color1(color1_), color2(color2_), size(size_) {}
+
+    Vector getColor(const Vector &p) const override {
+        Vector localP = p - normal * (p.dot(normal) + d); // Project p onto the plane
+        int stripe;
+
+        // Determine the dominant axis of the normal vector
+        if (fabs(normal.x) > fabs(normal.y) && fabs(normal.x) > fabs(normal.z)) {
+            // Plane is yz
+            stripe = floor(localP.y / size);
+        } else if (fabs(normal.y) > fabs(normal.x) && fabs(normal.y) > fabs(normal.z)) {
+            // Plane is xz
+            stripe = floor(localP.x / size);
+        } else {
+            // Plane is xy
+            stripe = floor(localP.x / size);
+        }
+
+        if (stripe % 2 == 0) {
+            return color1;
+        } else {
+            return color2;
+        }
     }
 };
 
