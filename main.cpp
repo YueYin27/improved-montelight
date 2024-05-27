@@ -140,6 +140,6 @@ int main(int argc, const char *argv[]) {
     std::chrono::duration<double> elapsed = end - start;
     std::cout << "\nRendering completed in " << elapsed.count() << " seconds." << std::endl;
 
-    img.save("render");
+    img.save("results_final/render");
     return 0;
 }
