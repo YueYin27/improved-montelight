@@ -16,13 +16,15 @@ bool EMITTER_SAMPLING = true;
 std::vector<Shape *> simpleScene = {
     new Plane(Vector(1, 0, 0), 0, Vector(0.9, 0.6, 0.7) * 0.799, Vector(), DIFFUSE),  // Left wall
     new Plane(Vector(-1, 0, 0), 100, Vector(0.2, 0.6, 0.86), Vector(), DIFFUSE),  // Right wall
-    new Plane(Vector(0, 0, -1), 0, Vector(200, 196, 223) / 255.0, Vector(), DIFFUSE),  // Back wall
     new Plane(Vector(0, -1, 0), 81.6, Vector(176, 159, 202) / 255.0, Vector(), DIFFUSE),  // Ceiling
-    new Checkerboard(Vector(0.5, 0.25, 0.5), Vector(0.75, 0.75, 0.25), 10, Vector(), DIFFUSE),  // Checkerboard (Floor)
-    new Sphere(Vector(27, 16.5, 47), 16.5f, Vector(47, 83, 155) / 255.0, Vector(), MIRROR),  // Small sphere
-    new Cube(Vector(60, 0, 60), Vector(85, 40, 85), Vector(0.9, 0.6, 0.7) * 0.799, Vector(), DIFFUSE, M_PI/4), // Big cube
+    new Stripe(Vector(0, 0, -1), 0, Vector(0.75, 0.75, 0.25), Vector(0.5, 0.25, 0.5), 10, Vector(), DIFFUSE),  // Back Wall
+    new Checkerboard(Vector(0, 1, 0), 0, Vector(0.25, 0.25, 0.25), Vector(1, 1, 1), 10, Vector(), DIFFUSE),  // Checkerboard (Floor)
+    new Sphere(Vector(25, 16.5, 45), 16.5f, Vector(1, 1, 1), Vector(), MIRROR),  // Small sphere
+    new Sphere(Vector(50, 12, 100), 12, Vector(1, 1, 1), Vector(), GLASS),  // Small sphere
+    new Cube(Vector(60, 0, 60), Vector(85, 40, 85), Vector(0.9, 0.6, 0.7) * 0.799, Vector(), DIFFUSE, M_PI / 4),  // Small cube
     new Sphere(Vector(50, 73, 81.6), 5, Vector(), Vector(4, 4, 4) * 100, DIFFUSE)  // Light source
 };
+
 
 void printProgressBar(int sample, int totalSamples) {
     int barWidth = 70;
@@ -71,7 +73,7 @@ int main(int argc, const char *argv[]) {
     auto &scene = simpleScene;
     double aperture = 0.5135 / APERTURE_FACTOR;
     Vector cx = Vector((w * aperture) / h, 0, 0);
-    Vector dir_norm = Vector(0, -0.042612, -1).norm();
+    Vector dir_norm = Vector(0, -0.042612, -1).normalize();
     double L = 140;
     double L_new = APERTURE_FACTOR * L;
     double L_diff = L - L_new;
@@ -82,7 +84,7 @@ int main(int argc, const char *argv[]) {
     L = L_new;
     Ray camera = Ray(Vector(50, 52, 295.6) + cam_shift, dir_norm);
     Tracer tracer = Tracer(scene, camera.origin);
-    Vector cy = (cx.cross(camera.direction)).norm() * aperture;
+    Vector cy = (cx.cross(camera.direction)).normalize() * aperture;
 
     auto start = std::chrono::high_resolution_clock::now();
 
@@ -117,15 +119,15 @@ int main(int argc, const char *argv[]) {
                     dy = 1 - sqrt(2 - Uy);
                 }
                 Vector d = (cx * (((x + dx) / float(w)) - 0.5)) + (cy * (((y + dy) / float(h)) - 0.5)) + camera.direction;
-                Ray ray = Ray(camera.origin + d * 140, d.norm());
+                Ray ray = Ray(camera.origin + d * 140, d.normalize());
                 if (FOCUS_EFFECT) {
-                    Vector fp = (camera.origin + d * L) + d.norm() * FOCAL_LENGTH;
+                    Vector fp = (camera.origin + d * L) + d.normalize() * FOCAL_LENGTH;
                     Vector del_x = (cx * dx * L / float(w));
                     Vector del_y = (cy * dy * L / float(h));
                     Vector point = camera.origin + d * L;
                     point = point + del_x + del_y;
-                    d = (fp - point).norm();
-                    ray = Ray(camera.origin + d * L, d.norm());
+                    d = (fp - point).normalize();
+                    ray = Ray(camera.origin + d * L, d.normalize());
                 }
                 Vector rads = tracer.getRadiance(ray, 0);
                 rads.clamp();

@@ -10,11 +10,12 @@ struct Vector {
     inline Vector operator+(const Vector &o) const { return Vector(x + o.x, y + o.y, z + o.z); }
     inline Vector &operator+=(const Vector &rhs) { x += rhs.x; y += rhs.y; z += rhs.z; return *this; }
     inline Vector operator-(const Vector &o) const { return Vector(x - o.x, y - o.y, z - o.z); }
+    inline Vector operator-() const { return Vector(-x, -y, -z); }  // Unary minus operator
     inline Vector operator*(const Vector &o) const { return Vector(x * o.x, y * o.y, z * o.z); }
     inline Vector operator/(double o) const { return Vector(x / o, y / o, z / o); }
     inline Vector operator*(double o) const { return Vector(x * o, y * o, z * o); }
     inline double dot(const Vector &o) const { return x * o.x + y * o.y + z * o.z; }
-    inline Vector norm() const { return *this * (1 / sqrt(x * x + y * y + z * z)); } // Marked as const
+    inline Vector normalize() const { return *this * (1 / sqrt(x * x + y * y + z * z)); } // Marked as const
     inline Vector cross(const Vector &o) const { return Vector(y * o.z - z * o.y, z * o.x - x * o.z, x * o.y - y * o.x); }
     inline double min() const { return fmin(x, fmin(y, z)); } // Marked as const
     inline double max() const { return fmax(x, fmax(y, z)); } // Marked as const
@@ -29,5 +30,10 @@ struct Vector {
         return *this;
     }
 };
+
+// Overloaded operator for multiplying a float with a Vector
+inline Vector operator*(double scalar, const Vector &vec) {
+    return Vector(vec.x * scalar, vec.y * scalar, vec.z * scalar);
+}
 
 #endif // VECTOR_H
