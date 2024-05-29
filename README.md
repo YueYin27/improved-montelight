@@ -63,7 +63,7 @@ The enhanced Monte Carlo rendering methods demonstrate significant improvements 
 The ablation study evaluates the impact of adaptive sampling and scaling after Russian Roulette on rendering quality. The results show that both techniques are crucial for achieving the best illumination and detail in rendered images.
 
 ![Ablation study results.](readme_figures/ablation.png)
-*Figure 4: Ablation study results. (a) and (e) show results without adaptive sampling and without scaling; (b) and (f) show results with adaptive sampling but without scaling; (c) and (g) show results without adaptive sampling but with scaling; and (d) and (h) show results with both adaptive sampling and scaling. Both adaptive sampling and scaling are important, with scaling having a more pronounced effect on overall illumination and quality.*
+*Figure 3: Ablation study results. (a) and (e) show results without adaptive sampling and without scaling; (b) and (f) show results with adaptive sampling but without scaling; (c) and (g) show results without adaptive sampling but with scaling; and (d) and (h) show results with both adaptive sampling and scaling. Both adaptive sampling and scaling are important, with scaling having a more pronounced effect on overall illumination and quality.*
 
 ## Conclusion
 The project introduces several enhancements to Monte Carlo rendering methods, focusing on adaptive sampling, improved Russian Roulette processes, and support for complex materials and geometries. These advancements significantly improve the efficiency and quality of rendered images, making Monte Carlo methods more practical for high-resolution and complex scenes.
