@@ -6,6 +6,7 @@
 - [How to Run](#how-to-run)
 - [Experiemental Results](#experiemental-results)
 - [Ablation Study](#ablation-study)
+- [Contributors](#contributors)
 
 ## Overview
 This project is based on the paper [Monte Carlo methods for improved rendering](chrome-extension://efaidnbmnnnibpcajpcglclefindmkaj/https://smerity.com/montelight-cpp/files/AM207_Paper.pdf). Our work enhances the Monte Carlo rendering methods to improve the efficiency and quality of photorealistic image rendering. The primary advancements include adaptive sampling, improved Russian Roulette termination, and extended support for various materials and geometries. These methods are integrated into a ray tracing framework and evaluated on scenes with varying complexity.
@@ -67,3 +68,7 @@ The ablation study evaluates the impact of adaptive sampling and scaling after R
 
 ## Conclusion
 The project introduces several enhancements to Monte Carlo rendering methods, focusing on adaptive sampling, improved Russian Roulette processes, and support for complex materials and geometries. These advancements significantly improve the efficiency and quality of rendered images, making Monte Carlo methods more practical for high-resolution and complex scenes.
+
+## Contributors
+- [Yue Yin](https://github.com/YueYin27)
+- [Enze Tao](https://github.com/Enze-Tao)
