@@ -72,12 +72,14 @@ struct Tracer {
         double U = drand48();
         double terminationProbability = hitObj->color.max();  // the Russian roulette is based on the maximum color component
         if (depth > 4) {
-            if (depth > 5 || U > terminationProbability) {
+            if (depth > 10 || U > terminationProbability) {
                 return Vector();
             }
             // Scale the radiance by the survival probability to maintain energy conservation
             hitObj->color = hitObj->color / terminationProbability;
         }
+
+        // if (depth > 0) return Vector();
 
         Vector hitPos = r.origin + r.direction * result.second;
         Vector normal = hitObj->getNormal(hitPos);
